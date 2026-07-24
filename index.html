@@ -32,7 +32,6 @@
             padding-bottom: 80px;
         }
 
-        /* ========== 背景浮粒 ========== */
         .bg-particles {
             position: fixed;
             inset: 0;
@@ -63,7 +62,6 @@
             }
         }
 
-        /* ========== 主容器 & 页面切换 ========== */
         .app-container {
             position: relative;
             z-index: 1;
@@ -89,7 +87,6 @@
             }
         }
 
-        /* ========== 底部导航 ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -135,7 +132,6 @@
             transform: scale(0.92);
         }
 
-        /* ========== 首页 ========== */
         .home-header {
             text-align: center;
             padding-top: 20px;
@@ -257,7 +253,6 @@
             font-size: 1.2rem;
         }
 
-        /* ========== 信纸页 ========== */
         .letter-paper {
             background: var(--card);
             border-radius: 12px;
@@ -356,7 +351,6 @@
             }
         }
 
-        /* ========== 回忆墙（照片卡片） ========== */
         .memories-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -394,7 +388,6 @@
             border: 1px solid #e5d9c4;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
         }
-        /* ---- 正面（文字标签） ---- */
         .card-front {
             background: linear-gradient(160deg, #fffef8, #fef7ea);
             z-index: 1;
@@ -417,7 +410,6 @@
             margin-top: 8px;
             letter-spacing: 1px;
         }
-        /* ---- 背面（照片） ---- */
         .card-back {
             background: #3d3226;
             transform: rotateY(180deg);
@@ -429,7 +421,6 @@
             object-fit: cover;
             display: block;
         }
-        /* 照片上的渐变遮罩（底部） */
         .card-back::after {
             content: "";
             position: absolute;
@@ -440,7 +431,6 @@
             pointer-events: none;
             z-index: 1;
         }
-        /* 照片上的文字标签 */
         .card-back .photo-label {
             position: absolute;
             bottom: 12px;
@@ -454,7 +444,6 @@
             pointer-events: none;
         }
 
-        /* ========== 敬茶页 ========== */
         .tea-scene {
             text-align: center;
             padding-top: 10px;
@@ -521,7 +510,6 @@
             color: var(--accent);
         }
 
-        /* ========== 彩带/纸屑 ========== */
         .confetti-container {
             position: fixed;
             inset: 0;
@@ -550,7 +538,6 @@
             }
         }
 
-        /* ========== 页面标题行 ========== */
         .page-title {
             font-size: 1.3rem;
             letter-spacing: 4px;
@@ -565,21 +552,15 @@
 </head>
 <body>
 
-    <!-- 背景浮粒 -->
     <div class="bg-particles" id="bgParticles"></div>
-
-    <!-- 彩带容器 -->
     <div class="confetti-container" id="confettiContainer"></div>
 
-    <!-- ==================== 主应用容器 ==================== -->
     <div class="app-container">
 
         <!-- ===== 首页 ===== -->
         <div class="page active" id="page-home">
             <div class="home-header">
-                <div class="cap-wrapper" id="capWrapper" title="戳我扔帽子！🎓">
-                    🎓
-                </div>
+                <div class="cap-wrapper" id="capWrapper" title="戳我扔帽子！🎓">🎓</div>
                 <p class="cap-hint">👆 戳一下帽子试试~</p>
                 <h1 class="home-title">毕业季 · 谢师恩</h1>
                 <p class="home-sub">虽不能至 心向往之</p>
@@ -587,23 +568,17 @@
             <div class="home-cards">
                 <div class="home-card" data-nav="letter">
                     <span class="card-emoji">💌</span>
-                    <div class="card-info">
-                        <h3>心里话</h3><span>一封短短的感谢信</span>
-                    </div>
+                    <div class="card-info"><h3>心里话</h3><span>一封短短的感谢信</span></div>
                     <span class="arrow">→</span>
                 </div>
                 <div class="home-card" data-nav="memories">
                     <span class="card-emoji">📸</span>
-                    <div class="card-info">
-                        <h3>回忆墙</h3><span>翻开那些温暖瞬间</span>
-                    </div>
+                    <div class="card-info"><h3>回忆墙</h3><span>翻开那些温暖瞬间</span></div>
                     <span class="arrow">→</span>
                 </div>
                 <div class="home-card" data-nav="cheers">
                     <span class="card-emoji">🍵</span>
-                    <div class="card-info">
-                        <h3>云端敬茶</h3><span>以茶代酒 遥敬恩师</span>
-                    </div>
+                    <div class="card-info"><h3>云端敬茶</h3><span>以茶代酒 遥敬恩师</span></div>
                     <span class="arrow">→</span>
                 </div>
             </div>
@@ -614,8 +589,7 @@
             <div class="page-title"><span class="dot">◆</span> 心 里 话 <span class="dot">◆</span></div>
             <div class="letter-paper">
                 <p class="typewriter-text" id="typewriterText"></p>
-                <span class="cursor" id="typewriterCursor"></span>
-                <br>
+                <span class="cursor" id="typewriterCursor"></span><br>
                 <button class="letter-skip" id="letterSkip">跳过动画 → 直接看全文</button>
             </div>
             <div class="heart-float-area">
@@ -624,14 +598,14 @@
             </div>
         </div>
 
-        <!-- ===== 回忆墙页（照片卡片） ===== -->
+        <!-- ===== 回忆墙页 ===== -->
         <div class="page" id="page-memories">
             <div class="page-title"><span class="dot">◆</span> 回 忆 墙 <span class="dot">◆</span></div>
             <p style="text-align:center;font-size:0.85rem;color:#ab9a85;margin-bottom:18px;letter-spacing:2px;">
                 翻开卡片，看看我们的「修仙」时光 ✨
             </p>
             <div class="memories-grid">
-                <!-- 卡片1：正面 "神王"，背面 img4.jpg -->
+                <!-- 卡片1：神王 ← img4 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">👑</span>
@@ -639,11 +613,11 @@
                         <span class="front-hint">点击翻开</span>
                     </div>
                     <div class="card-face card-back">
-                        <img src="images/img4.jpg" alt="神王" loading="lazy">
+                        <img src="img4.jpg.jpg" alt="神王" loading="lazy">
                         <span class="photo-label">👑 神王</span>
                     </div>
                 </div>
-                <!-- 卡片2：正面 "神班"，背面 img3.jpg -->
+                <!-- 卡片2：神班 ← img3 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">⭐</span>
@@ -651,11 +625,11 @@
                         <span class="front-hint">点击翻开</span>
                     </div>
                     <div class="card-face card-back">
-                        <img src="images/img3.jpg" alt="神班" loading="lazy">
+                        <img src="img3.jpg.jpg" alt="神班" loading="lazy">
                         <span class="photo-label">⭐ 神班</span>
                     </div>
                 </div>
-                <!-- 卡片3：正面 "得道飞升"，背面 img2.jpg -->
+                <!-- 卡片3：得道飞升 ← img2 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">☁️</span>
@@ -663,11 +637,11 @@
                         <span class="front-hint">点击翻开</span>
                     </div>
                     <div class="card-face card-back">
-                        <img src="images/img2.jpg" alt="得道飞升" loading="lazy">
+                        <img src="img2.jpg.jpg" alt="得道飞升" loading="lazy">
                         <span class="photo-label">☁️ 得道飞升</span>
                     </div>
                 </div>
-                <!-- 卡片4：正面 "群神像"，背面 img1.jpg -->
+                <!-- 卡片4：群神像 ← img1 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">📸</span>
@@ -675,7 +649,7 @@
                         <span class="front-hint">点击翻开</span>
                     </div>
                     <div class="card-face card-back">
-                        <img src="images/img1.jpg" alt="群神像" loading="lazy">
+                        <img src="img1.jpg.jpg" alt="群神像" loading="lazy">
                         <span class="photo-label">📸 群神像</span>
                     </div>
                 </div>
@@ -686,13 +660,9 @@
         <div class="page" id="page-cheers">
             <div class="page-title"><span class="dot">◆</span> 云 端 敬 茶 <span class="dot">◆</span></div>
             <div class="tea-scene">
-                <div class="tea-cup-area" id="teaCupArea">
-                    <span class="tea-cup-emoji">🍵</span>
-                </div>
+                <div class="tea-cup-area" id="teaCupArea"><span class="tea-cup-emoji">🍵</span></div>
                 <p style="font-size:0.85rem;color:#c9a96e;margin-top:4px;letter-spacing:2px;">👆 点击茶杯，斟满心意</p>
-                <div class="tea-progress-wrap">
-                    <div class="tea-progress-fill" id="teaProgressFill"></div>
-                </div>
+                <div class="tea-progress-wrap"><div class="tea-progress-fill" id="teaProgressFill"></div></div>
                 <p class="tea-counter" id="teaCounter">心意值：0 / 10</p>
                 <p class="tea-toast-msg" id="teaToastMsg"></p>
                 <button class="tea-reset" id="teaReset">🔄 再敬一杯</button>
@@ -700,25 +670,16 @@
         </div>
     </div>
 
-    <!-- ==================== 底部导航栏 ==================== -->
+    <!-- 底部导航 -->
     <nav class="bottom-nav">
-        <button class="nav-btn active" data-section="home">
-            <span class="icon">🏠</span>首页
-        </button>
-        <button class="nav-btn" data-section="letter">
-            <span class="icon">💌</span>心里话
-        </button>
-        <button class="nav-btn" data-section="memories">
-            <span class="icon">📸</span>回忆墙
-        </button>
-        <button class="nav-btn" data-section="cheers">
-            <span class="icon">🍵</span>敬茶
-        </button>
+        <button class="nav-btn active" data-section="home"><span class="icon">🏠</span>首页</button>
+        <button class="nav-btn" data-section="letter"><span class="icon">💌</span>心里话</button>
+        <button class="nav-btn" data-section="memories"><span class="icon">📸</span>回忆墙</button>
+        <button class="nav-btn" data-section="cheers"><span class="icon">🍵</span>敬茶</button>
     </nav>
 
     <script>
         (function() {
-            // ============ 页面切换 ============
             const pages = document.querySelectorAll('.page');
             const navBtns = document.querySelectorAll('.nav-btn');
             let currentPage = 'home';
@@ -727,7 +688,6 @@
 
             function switchPage(targetId) {
                 if (currentPage === targetId) return;
-                // 清理打字机
                 if (typewriterTimer) clearTimeout(typewriterTimer);
                 if (typewriterResolve) typewriterResolve();
                 typewriterTimer = null;
@@ -742,19 +702,15 @@
                 if (activeBtn) activeBtn.classList.add('active');
 
                 currentPage = targetId;
-
-                // 进入特定页面的初始化
                 if (targetId === 'letter') startTypewriter();
                 if (targetId === 'cheers') updateTeaUI();
                 if (targetId === 'home') resetCapAnimation();
             }
 
-            // 底部导航点击
             navBtns.forEach(btn => {
                 btn.addEventListener('click', () => switchPage(btn.dataset.section));
             });
 
-            // 首页卡片点击跳转
             document.querySelectorAll('.home-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const target = card.dataset.nav;
@@ -762,7 +718,6 @@
                 });
             });
 
-            // ============ 毕业帽动画 ============
             const capWrapper = document.getElementById('capWrapper');
             let capTossing = false;
 
@@ -771,9 +726,7 @@
                 capTossing = false;
                 void capWrapper.offsetWidth;
                 capWrapper.style.animation = 'none';
-                setTimeout(() => {
-                    capWrapper.style.animation = '';
-                }, 10);
+                setTimeout(() => { capWrapper.style.animation = ''; }, 10);
             }
 
             capWrapper.addEventListener('click', function(e) {
@@ -788,19 +741,10 @@
                 }, 750);
             });
 
-            // ============ 打字机效果 ============
             const typewriterEl = document.getElementById('typewriterText');
             const cursorEl = document.getElementById('typewriterCursor');
             const skipBtn = document.getElementById('letterSkip');
-            const fullText = `亲爱的老师：
-
-            虽然没能亲赴谢师宴，但这份感激隔着屏幕也要送到。
-
-            还记得您的经典口头禅、批改作业时的红色批注，还有那些让我醍醐灌顶的瞬间……
-
-            谢谢您，不只教知识，更教会我做一个温暖的人。
-
-            —— 您的学生`;
+            const fullText = `亲爱的老师：\n\n虽然没能亲赴谢师宴，但这份感激隔着屏幕也要送到。\n\n还记得您的经典口头禅、批改作业时的红色批注，还有那些让我醍醐灌顶的瞬间……\n\n谢谢您，不只教知识，更教会我做一个温暖的人。\n\n—— 您的学生`;
 
             function startTypewriter() {
                 typewriterEl.textContent = '';
@@ -839,7 +783,6 @@
                 typewriterTimer = setTimeout(typeNext, 300);
             }
 
-            // ============ 小心心飘浮 ============
             const sendHeartBtn = document.getElementById('sendHeartBtn');
             sendHeartBtn.addEventListener('click', function(e) {
                 const heart = document.createElement('span');
@@ -854,20 +797,16 @@
                 setTimeout(() => heart.remove(), 3000);
             });
 
-            // ============ 回忆卡片翻转 ============
             document.querySelectorAll('.memory-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const wasFlipped = this.classList.contains('flipped');
-                    document.querySelectorAll('.memory-card').forEach(c =>
-                        c.classList.remove('flipped'));
-                    if (!wasFlipped) {
-                        this.classList.add('flipped');
-                    }
+                    document.querySelectorAll('.memory-card').forEach(c => c.classList.remove(
+                        'flipped'));
+                    if (!wasFlipped) this.classList.add('flipped');
                     if (navigator.vibrate) navigator.vibrate(8);
                 });
             });
 
-            // ============ 敬茶互动 ============
             let teaLevel = 0;
             const maxTea = 10;
             const teaCupArea = document.getElementById('teaCupArea');
@@ -915,7 +854,6 @@
                 if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
             });
 
-            // ============ 彩带/纸屑系统 ============
             function spawnConfetti(count = 40) {
                 const container = document.getElementById('confettiContainer');
                 const colors = [
@@ -952,7 +890,6 @@
 
                 container.appendChild(fragment);
 
-                const maxDuration = 3.2;
                 setTimeout(() => {
                     const pieces = container.querySelectorAll('.confetti-piece');
                     if (pieces.length > 80) {
@@ -960,7 +897,7 @@
                             if (i < pieces.length - 20) p.remove();
                         });
                     }
-                }, maxDuration * 1000);
+                }, 3200);
 
                 setTimeout(() => {
                     const allPieces = container.querySelectorAll('.confetti-piece');
@@ -974,7 +911,6 @@
                 }, 50);
             }
 
-            // ============ 背景浮粒 ============
             function createBgParticles() {
                 const container = document.getElementById('bgParticles');
                 const frag = document.createDocumentFragment();
@@ -997,16 +933,9 @@
                 container.appendChild(frag);
             }
             createBgParticles();
-
-            // ============ 初始状态 ============
             updateTeaUI();
 
             console.log('🎓 谢师恩页面已就绪！');
-            console.log('  🏠 首页 - 戳毕业帽有惊喜');
-            console.log('  💌 心里话 - 打字机效果');
-            console.log('  📸 回忆墙 - 翻卡片看照片');
-            console.log('  🍵 敬茶 - 点满10下放大烟花');
-            console.log('❤ 祝老师桃李满天下！');
         })();
     </script>
 </body>
