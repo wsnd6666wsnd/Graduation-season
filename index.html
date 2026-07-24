@@ -11,8 +11,6 @@
             --card: #fffef8;
             --ink: #3d3226;
             --accent: #c4734f;
-            --tea: #b8956a;
-            --coral: #e8815b;
         }
 
         * {
@@ -84,6 +82,76 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        /* ===== 音乐开关按钮 ===== */
+        .music-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 400;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid #d4c5aa;
+            background: rgba(255, 254, 248, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            color: #b8a48e;
+        }
+        .music-toggle:hover {
+            border-color: var(--gold);
+            color: var(--accent);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+        }
+        .music-toggle.playing {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: rgba(254, 247, 234, 0.9);
+            animation: musicPulse 2s ease-in-out infinite;
+        }
+        @keyframes musicPulse {
+            0%,
+            100% {
+                box-shadow: 0 2px 10px rgba(196, 115, 79, 0.12);
+            }
+            50% {
+                box-shadow: 0 2px 22px rgba(196, 115, 79, 0.28);
+            }
+        }
+        .music-toggle .note1,
+        .music-toggle .note2 {
+            position: absolute;
+            font-size: 0.5rem;
+            opacity: 0;
+            transition: all 0.4s;
+        }
+        .music-toggle.playing .note1 {
+            opacity: 0.7;
+            transform: translate(-10px, -14px);
+            animation: floatNote 1.5s ease-out infinite;
+        }
+        .music-toggle.playing .note2 {
+            opacity: 0.7;
+            transform: translate(10px, -10px);
+            animation: floatNote 1.5s ease-out 0.5s infinite;
+        }
+        @keyframes floatNote {
+            0% {
+                opacity: 0.7;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-28px);
             }
         }
 
@@ -548,12 +616,41 @@
         .page-title .dot {
             color: var(--gold);
         }
+
+        /* ===== Toast 提示 ===== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: rgba(61, 50, 38, 0.88);
+            color: #fef9f0;
+            padding: 10px 22px;
+            border-radius: 22px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            z-index: 500;
+            pointer-events: none;
+            transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
 
     <div class="bg-particles" id="bgParticles"></div>
     <div class="confetti-container" id="confettiContainer"></div>
+
+    <!-- 音乐开关 -->
+    <button class="music-toggle" id="musicToggle" title="开启背景音乐">
+        🎵<span class="note1">♪</span><span class="note2">♫</span>
+    </button>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <div class="app-container">
 
@@ -605,7 +702,6 @@
                 翻开卡片，看看我们的「修仙」时光 ✨
             </p>
             <div class="memories-grid">
-                <!-- 卡片1：神王 ← img4 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">👑</span>
@@ -617,7 +713,6 @@
                         <span class="photo-label">👑 神王</span>
                     </div>
                 </div>
-                <!-- 卡片2：神班 ← img3 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">⭐</span>
@@ -629,7 +724,6 @@
                         <span class="photo-label">⭐ 神班</span>
                     </div>
                 </div>
-                <!-- 卡片3：得道飞升 ← img2 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">☁️</span>
@@ -641,7 +735,6 @@
                         <span class="photo-label">☁️ 得道飞升</span>
                     </div>
                 </div>
-                <!-- 卡片4：群神像 ← img1 -->
                 <div class="memory-card">
                     <div class="card-face card-front">
                         <span class="front-emoji">📸</span>
@@ -670,7 +763,6 @@
         </div>
     </div>
 
-    <!-- 底部导航 -->
     <nav class="bottom-nav">
         <button class="nav-btn active" data-section="home"><span class="icon">🏠</span>首页</button>
         <button class="nav-btn" data-section="letter"><span class="icon">💌</span>心里话</button>
@@ -680,6 +772,251 @@
 
     <script>
         (function() {
+            // ==================== 音频系统 ====================
+            const AudioSys = {
+                ctx: null,
+                bgmGain: null,
+                bgmPlaying: false,
+                bgmTimer: null,
+                masterGain: null,
+
+                init() {
+                    if (this.ctx) return;
+                    try {
+                        this.ctx = new(window.AudioContext || window.webkitAudioContext)();
+                        this.masterGain = this.ctx.createGain();
+                        this.masterGain.gain.value = 0.7;
+                        this.masterGain.connect(this.ctx.destination);
+
+                        this.bgmGain = this.ctx.createGain();
+                        this.bgmGain.gain.value = 0;
+                        this.bgmGain.connect(this.masterGain);
+                    } catch (e) {
+                        console.warn('音频系统不可用:', e);
+                    }
+                },
+
+                resume() {
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    this.init();
+                },
+
+                // 播放单个音
+                playTone(freq, startTime, duration, type = 'sine', gainVal = 0.18, dest = null) {
+                    if (!this.ctx) return;
+                    const t = startTime || this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, t);
+                    g.gain.setValueAtTime(gainVal, t);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+                    osc.connect(g);
+                    g.connect(dest || this.masterGain);
+                    osc.start(t);
+                    osc.stop(t + duration + 0.02);
+                },
+
+                // 播放滑音
+                playSlide(freqStart, freqEnd, startTime, duration, type = 'sine', gainVal = 0.2) {
+                    if (!this.ctx) return;
+                    const t = startTime || this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freqStart, t);
+                    osc.frequency.exponentialRampToValueAtTime(freqEnd, t + duration);
+                    g.gain.setValueAtTime(gainVal, t);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + duration + 0.05);
+                    osc.connect(g);
+                    g.connect(this.masterGain);
+                    osc.start(t);
+                    osc.stop(t + duration + 0.06);
+                },
+
+                // 播放噪声
+                playNoise(startTime, duration, gainVal = 0.08) {
+                    if (!this.ctx) return;
+                    const t = startTime || this.ctx.currentTime;
+                    const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.5;
+                    }
+                    const source = this.ctx.createBufferSource();
+                    source.buffer = buffer;
+                    const g = this.ctx.createGain();
+                    g.gain.setValueAtTime(gainVal, t);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'highpass';
+                    filter.frequency.value = 2000;
+                    source.connect(filter);
+                    filter.connect(g);
+                    g.connect(this.masterGain);
+                    source.start(t);
+                    source.stop(t + duration + 0.02);
+                },
+
+                // === 音效库 ===
+                sfx: {
+                    click() {
+                        AudioSys.playTone(880, null, 0.08, 'sine', 0.13);
+                        AudioSys.playTone(1100, null, 0.06, 'sine', 0.09);
+                    },
+                    whoosh() {
+                        AudioSys.playSlide(260, 1400, null, 0.35, 'sawtooth', 0.12);
+                        AudioSys.playNoise(null, 0.2, 0.05);
+                    },
+                    flip() {
+                        AudioSys.playNoise(null, 0.12, 0.06);
+                        AudioSys.playTone(600, null, 0.06, 'triangle', 0.1);
+                        setTimeout(() => AudioSys.playTone(900, null, 0.06, 'triangle', 0.08), 60);
+                    },
+                    drop() {
+                        AudioSys.playSlide(1200, 400, null, 0.15, 'sine', 0.16);
+                    },
+                    ding() {
+                        AudioSys.playTone(1047, null, 0.25, 'sine', 0.14);
+                        AudioSys.playTone(1319, null, 0.2, 'sine', 0.1);
+                    },
+                    fanfare() {
+                        const now = AudioSys.ctx ? AudioSys.ctx.currentTime : 0;
+                        [523, 659, 784, 1047].forEach((f, i) => {
+                            AudioSys.playTone(f, now + i * 0.1, 0.3, 'triangle', 0.16);
+                        });
+                    },
+                    switch() {
+                        AudioSys.playSlide(500, 700, null, 0.1, 'sine', 0.09);
+                    },
+                    reset() {
+                        AudioSys.playSlide(600, 200, null, 0.18, 'triangle', 0.11);
+                    },
+                    heartPop() {
+                        AudioSys.playTone(988, null, 0.12, 'sine', 0.11);
+                        AudioSys.playTone(1175, null, 0.1, 'sine', 0.08);
+                    },
+                },
+
+                // === 背景音乐 ===
+                startBGM() {
+                    if (!this.ctx || this.bgmPlaying) return;
+                    this.bgmPlaying = true;
+
+                    // 淡入
+                    const now = this.ctx.currentTime;
+                    this.bgmGain.gain.cancelScheduledValues(now);
+                    this.bgmGain.gain.setValueAtTime(this.bgmGain.gain.value || 0.0001, now);
+                    this.bgmGain.gain.exponentialRampToValueAtTime(0.1, now + 0.8);
+
+                    this._scheduleBGMLoop(now);
+                },
+
+                stopBGM() {
+                    this.bgmPlaying = false;
+                    if (this.bgmTimer) clearTimeout(this.bgmTimer);
+                    if (this.ctx && this.bgmGain) {
+                        const now = this.ctx.currentTime;
+                        this.bgmGain.gain.cancelScheduledValues(now);
+                        this.bgmGain.gain.setValueAtTime(this.bgmGain.gain.value || 0.1, now);
+                        this.bgmGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                    }
+                },
+
+                toggleBGM() {
+                    this.init();
+                    this.resume();
+                    if (this.bgmPlaying) {
+                        this.stopBGM();
+                    } else {
+                        this.startBGM();
+                    }
+                    return this.bgmPlaying;
+                },
+
+                _scheduleBGMLoop(startTime) {
+                    if (!this.bgmPlaying || !this.ctx) return;
+
+                    const now = startTime || this.ctx.currentTime;
+                    const loopDuration = 8.0; // 8 秒循环
+                    const eighth = 0.25; // 八分音符（BPM 120）
+
+                    // 低音线（每 2 秒一个低音）
+                    const bassNotes = [
+                        { freq: 130.81, time: 0, dur: 1.8 },
+                        { freq: 110.00, time: 2, dur: 1.8 },
+                        { freq: 87.31, time: 4, dur: 1.8 },
+                        { freq: 98.00, time: 6, dur: 1.8 },
+                    ];
+
+                    // 旋律（32 个八分音符）
+                    const melodyNotes = [
+                        329.63, 392.00, 440.00, 523.25, 440.00, 392.00, 329.63, 293.66,
+                        261.63, 293.66, 329.63, 392.00, 329.63, 293.66, 261.63, 261.63,
+                        392.00, 440.00, 523.25, 587.33, 523.25, 440.00, 392.00, 329.63,
+                        293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66, 261.63,
+                    ];
+
+                    // 安排低音
+                    bassNotes.forEach(b => {
+                        this.playTone(b.freq, now + b.time, b.dur, 'triangle', 0.13, this.bgmGain);
+                    });
+
+                    // 安排旋律
+                    melodyNotes.forEach((freq, i) => {
+                        const t = now + i * eighth;
+                        const dur = (i === 15) ? 0.45 : 0.22; // 第 16 个音稍长
+                        this.playTone(freq, t, dur, 'sine', 0.1, this.bgmGain);
+                    });
+
+                    // 循环
+                    const nextStart = now + loopDuration;
+                    const delay = Math.max((nextStart - this.ctx.currentTime) * 1000 - 100, 50);
+                    this.bgmTimer = setTimeout(() => this._scheduleBGMLoop(nextStart), delay);
+                },
+            };
+
+            // ============ 页面首次交互时初始化音频 ============
+            function initAudioOnInteraction() {
+                AudioSys.init();
+                AudioSys.resume();
+            }
+            document.addEventListener('click', initAudioOnInteraction, { once: true });
+            document.addEventListener('touchstart', initAudioOnInteraction, { once: true });
+
+            // ============ 音乐开关按钮 ============
+            const musicToggle = document.getElementById('musicToggle');
+            musicToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const playing = AudioSys.toggleBGM();
+                if (playing) {
+                    musicToggle.classList.add('playing');
+                    musicToggle.title = '关闭背景音乐';
+                    showToast('🎵 轻快小曲已开启');
+                } else {
+                    musicToggle.classList.remove('playing');
+                    musicToggle.title = '开启背景音乐';
+                    showToast('🔇 音乐已关闭');
+                }
+            });
+
+            // ============ Toast 提示 ============
+            const toastEl = document.getElementById('toast');
+            let toastTimer = null;
+
+            function showToast(msg) {
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, 1800);
+            }
+
+            // ============ 页面切换 ============
             const pages = document.querySelectorAll('.page');
             const navBtns = document.querySelectorAll('.nav-btn');
             let currentPage = 'home';
@@ -705,6 +1042,9 @@
                 if (targetId === 'letter') startTypewriter();
                 if (targetId === 'cheers') updateTeaUI();
                 if (targetId === 'home') resetCapAnimation();
+
+                // 页面切换音效
+                AudioSys.sfx.switch();
             }
 
             navBtns.forEach(btn => {
@@ -714,10 +1054,14 @@
             document.querySelectorAll('.home-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const target = card.dataset.nav;
-                    if (target) switchPage(target);
+                    if (target) {
+                        AudioSys.sfx.click();
+                        switchPage(target);
+                    }
                 });
             });
 
+            // ============ 毕业帽 ============
             const capWrapper = document.getElementById('capWrapper');
             let capTossing = false;
 
@@ -733,6 +1077,7 @@
                 if (capTossing) return;
                 capTossing = true;
                 capWrapper.classList.add('tossing');
+                AudioSys.sfx.whoosh();
                 spawnConfetti(40);
                 if (navigator.vibrate) navigator.vibrate(15);
                 setTimeout(() => {
@@ -741,6 +1086,7 @@
                 }, 750);
             });
 
+            // ============ 打字机 ============
             const typewriterEl = document.getElementById('typewriterText');
             const cursorEl = document.getElementById('typewriterCursor');
             const skipBtn = document.getElementById('letterSkip');
@@ -761,9 +1107,15 @@
                         cursorEl.classList.add('done');
                         skipBtn.style.display = 'none';
                         typewriterTimer = null;
+                        // 打字完成音效
+                        AudioSys.sfx.ding();
                         return;
                     }
                     typewriterEl.textContent += chars[index];
+                    // 每打 3 个字来一个微弱按键音
+                    if (index % 3 === 0 && chars[index] !== '\n' && chars[index] !== ' ') {
+                        AudioSys.playTone(1600 + Math.random() * 400, null, 0.02, 'sine', 0.04);
+                    }
                     index++;
                     const delay = /[，。！？、；：\n]/.test(chars[index - 1]) ? 120 : 55;
                     typewriterTimer = setTimeout(typeNext, delay);
@@ -776,6 +1128,7 @@
                     cursorEl.classList.add('done');
                     skipBtn.style.display = 'none';
                     typewriterTimer = null;
+                    AudioSys.sfx.click();
                 }
 
                 skipBtn.onclick = skipAll;
@@ -783,6 +1136,7 @@
                 typewriterTimer = setTimeout(typeNext, 300);
             }
 
+            // ============ 小心心 ============
             const sendHeartBtn = document.getElementById('sendHeartBtn');
             sendHeartBtn.addEventListener('click', function(e) {
                 const heart = document.createElement('span');
@@ -793,20 +1147,28 @@
                 heart.style.top = rect.top + 'px';
                 heart.style.animationDuration = (Math.random() * 1.5 + 2) + 's';
                 document.body.appendChild(heart);
+                AudioSys.sfx.heartPop();
                 if (navigator.vibrate) navigator.vibrate(10);
                 setTimeout(() => heart.remove(), 3000);
             });
 
+            // ============ 回忆卡片 ============
             document.querySelectorAll('.memory-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const wasFlipped = this.classList.contains('flipped');
                     document.querySelectorAll('.memory-card').forEach(c => c.classList.remove(
                         'flipped'));
-                    if (!wasFlipped) this.classList.add('flipped');
+                    if (!wasFlipped) {
+                        this.classList.add('flipped');
+                        AudioSys.sfx.flip();
+                    } else {
+                        AudioSys.sfx.click();
+                    }
                     if (navigator.vibrate) navigator.vibrate(8);
                 });
             });
 
+            // ============ 敬茶 ============
             let teaLevel = 0;
             const maxTea = 10;
             const teaCupArea = document.getElementById('teaCupArea');
@@ -835,13 +1197,18 @@
             teaCupArea.addEventListener('click', function() {
                 if (teaLevel >= maxTea) {
                     spawnConfetti(25);
+                    AudioSys.sfx.fanfare();
                     return;
                 }
                 teaLevel++;
+                AudioSys.sfx.drop();
                 updateTeaUI();
                 if (navigator.vibrate) navigator.vibrate(12);
                 if (teaLevel >= maxTea) {
-                    setTimeout(() => spawnConfetti(80), 300);
+                    setTimeout(() => {
+                        spawnConfetti(80);
+                        AudioSys.sfx.fanfare();
+                    }, 300);
                     teaCupArea.style.transform = 'scale(1.08)';
                     setTimeout(() => { teaCupArea.style.transform = ''; }, 300);
                 }
@@ -851,9 +1218,11 @@
                 teaLevel = 0;
                 teaToastMsg.textContent = '';
                 updateTeaUI();
+                AudioSys.sfx.reset();
                 if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
             });
 
+            // ============ 彩带 ============
             function spawnConfetti(count = 40) {
                 const container = document.getElementById('confettiContainer');
                 const colors = [
@@ -911,6 +1280,7 @@
                 }, 50);
             }
 
+            // ============ 背景浮粒 ============
             function createBgParticles() {
                 const container = document.getElementById('bgParticles');
                 const frag = document.createDocumentFragment();
@@ -936,6 +1306,13 @@
             updateTeaUI();
 
             console.log('🎓 谢师恩页面已就绪！');
+            console.log('  🎵 右上角音符按钮 → 开启轻快背景音乐');
+            console.log('  🏠 首页 - 戳毕业帽有惊喜');
+            console.log('  💌 心里话 - 打字机效果');
+            console.log('  📸 回忆墙 - 翻卡片看照片');
+            console.log('  🍵 敬茶 - 点满10下放大烟花');
+            console.log('  🔊 所有交互都有音效反馈');
+            console.log('❤ 祝老师桃李满天下！');
         })();
     </script>
 </body>
