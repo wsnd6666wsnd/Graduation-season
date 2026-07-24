@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>谢师恩 · 毕业季</title>
+    <style>
+        :root {
+            --gold: #d4a853;
+            --warm: #fef9f0;
+            --card: #fffef8;
+            --ink: #3d3226;
+            --accent: #c4734f;
+            --tea: #b8956a;
+            --coral: #e8815b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+            background: var(--warm);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* ========== 背景浮粒 ========== */
+        .bg-particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0;
+            animation: floatUp 8s ease-in infinite;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(105vh) scale(0);
+            }
+            10% {
+                opacity: 0.25;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10vh) scale(1.5);
+            }
+        }
+
+        /* ========== 主容器 & 页面切换 ========== */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 24px 20px 20px;
+        }
+        .page {
+            display: none;
+            animation: pageIn 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 底部导航 ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 253, 248, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid #eadcc8;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 8px max(8px, env(safe-area-inset-bottom));
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 12px;
+            border-radius: 16px;
+            transition: all 0.3s;
+            color: #b8a48e;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            min-width: 56px;
+        }
+        .nav-btn .icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        .nav-btn.active {
+            color: var(--accent);
+            background: rgba(196, 115, 79, 0.08);
+        }
+        .nav-btn.active .icon {
+            transform: translateY(-3px) scale(1.15);
+        }
+        .nav-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ========== 首页 ========== */
+        .home-header {
+            text-align: center;
+            padding-top: 20px;
+        }
+        .cap-wrapper {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            font-size: 5rem;
+            transition: transform 0.25s;
+            animation: capBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 8px 20px rgba(180, 130, 70, 0.3));
+        }
+        @keyframes capBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-14px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-6px);
+            }
+            85% {
+                transform: translateY(0);
+            }
+        }
+        .cap-wrapper.tossing {
+            animation: capToss 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        @keyframes capToss {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-180px) rotate(380deg) scale(1.3);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) rotate(720deg) scale(1);
+                opacity: 1;
+            }
+        }
+        .cap-hint {
+            font-size: 0.85rem;
+            color: #c9a96e;
+            margin-top: 6px;
+            letter-spacing: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .home-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--ink);
+            margin: 16px 0 4px;
+        }
+        .home-sub {
+            font-size: 0.95rem;
+            color: #9b8976;
+            letter-spacing: 3px;
+            margin-bottom: 28px;
+        }
+        .home-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .home-card {
+            background: var(--card);
+            border: 1px solid #e8d9c4;
+            border-radius: 16px;
+            padding: 18px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+        .home-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+            border-color: var(--gold);
+        }
+        .home-card:active {
+            transform: scale(0.97);
+        }
+        .home-card .card-emoji {
+            font-size: 2.2rem;
+            flex-shrink: 0;
+        }
+        .home-card .card-info h3 {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+        }
+        .home-card .card-info span {
+            font-size: 0.8rem;
+            color: #ab9a85;
+        }
+        .home-card .arrow {
+            margin-left: auto;
+            color: #cfb991;
+            font-size: 1.2rem;
+        }
+
+        /* ========== 信纸页 ========== */
+        .letter-paper {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid #e5d9c8;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            min-height: 280px;
+            line-height: 2;
+            letter-spacing: 1px;
+        }
+        .letter-paper .typewriter-text {
+            font-size: 1.05rem;
+            color: #4a3f34;
+            white-space: pre-wrap;
+        }
+        .letter-paper .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--accent);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.7s step-end infinite;
+        }
+        .cursor.done {
+            animation: blink 1.8s step-end infinite;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+        .letter-skip {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.78rem;
+            color: #c9a96e;
+            cursor: pointer;
+            letter-spacing: 1px;
+            border: none;
+            background: none;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .letter-skip:hover {
+            opacity: 1;
+        }
+        .heart-float-area {
+            text-align: center;
+            margin-top: 18px;
+            min-height: 40px;
+        }
+        .send-heart-btn {
+            font-size: 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+        @keyframes gentlePulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.18);
+            }
+        }
+        .send-heart-btn:active {
+            transform: scale(0.8);
+            animation: none;
+        }
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 200;
+            animation: heartRise 2.5s ease-out forwards;
+        }
+        @keyframes heartRise {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.6) rotate(0deg);
+            }
+            40% {
+                opacity: 1;
+                transform: translateY(-120px) scale(1.3) rotate(15deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-300px) scale(0.4) rotate(-20deg);
+            }
+        }
+
+        /* ========== 回忆墙（照片卡片） ========== */
+        .memories-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            perspective: 1000px;
+        }
+        @media (max-width: 400px) {
+            .memories-grid {
+                grid-template-columns: 1fr;
+                max-width: 260px;
+                margin: 0 auto;
+            }
+        }
+        .memory-card {
+            aspect-ratio: 3 / 4;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .memory-card .card-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid #e5d9c4;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+        /* ---- 正面（文字标签） ---- */
+        .card-front {
+            background: linear-gradient(160deg, #fffef8, #fef7ea);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        .card-front .front-emoji {
+            font-size: 2.6rem;
+            margin-bottom: 10px;
+        }
+        .card-front .front-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--ink);
+        }
+        .card-front .front-hint {
+            font-size: 0.7rem;
+            color: #c9b896;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+        /* ---- 背面（照片） ---- */
+        .card-back {
+            background: #3d3226;
+            transform: rotateY(180deg);
+            padding: 0;
+        }
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        /* 照片上的渐变遮罩（底部） */
+        .card-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg,
+                    transparent 65%,
+                    rgba(61, 50, 38, 0.45) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 照片上的文字标签 */
+        .card-back .photo-label {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            color: #fff;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        /* ========== 敬茶页 ========== */
+        .tea-scene {
+            text-align: center;
+            padding-top: 10px;
+        }
+        .tea-cup-area {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tea-cup-emoji {
+            font-size: 6rem;
+            display: block;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 6px 16px rgba(160, 120, 70, 0.35));
+        }
+        .tea-cup-area:active .tea-cup-emoji {
+            transform: scale(0.9) rotate(-4deg);
+        }
+        .tea-progress-wrap {
+            margin: 20px auto 0;
+            width: 200px;
+            height: 10px;
+            background: #eadcc8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .tea-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4a853, #c4734f);
+            border-radius: 10px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .tea-counter {
+            font-size: 0.85rem;
+            color: #ab9a85;
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+        .tea-toast-msg {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-top: 12px;
+            letter-spacing: 2px;
+            min-height: 28px;
+            transition: all 0.3s;
+        }
+        .tea-reset {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            background: none;
+            border: 1px solid #d4c5aa;
+            border-radius: 20px;
+            padding: 6px 18px;
+            cursor: pointer;
+            color: #ab9a85;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .tea-reset:hover {
+            background: #fef7ea;
+            border-color: var(--gold);
+            color: var(--accent);
+        }
+
+        /* ========== 彩带/纸屑 ========== */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 300;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall var(--dur, 2.5s) ease-in var(--delay, 0s) forwards;
+            opacity: 0;
+        }
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(105vh) rotate(var(--rot, 720deg)) scale(0.3);
+            }
+        }
+
+        /* ========== 页面标题行 ========== */
+        .page-title {
+            font-size: 1.3rem;
+            letter-spacing: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .page-title .dot {
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景浮粒 -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- 彩带容器 -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <!-- ==================== 主应用容器 ==================== -->
+    <div class="app-container">
+
+        <!-- ===== 首页 ===== -->
+        <div class="page active" id="page-home">
+            <div class="home-header">
+                <div class="cap-wrapper" id="capWrapper" title="戳我扔帽子！🎓">
+                    🎓
+                </div>
+                <p class="cap-hint">👆 戳一下帽子试试~</p>
+                <h1 class="home-title">毕业季 · 谢师恩</h1>
+                <p class="home-sub">虽不能至 心向往之</p>
+            </div>
+            <div class="home-cards">
+                <div class="home-card" data-nav="letter">
+                    <span class="card-emoji">💌</span>
+                    <div class="card-info">
+                        <h3>心里话</h3><span>一封短短的感谢信</span>
+                    </div>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="home-card" data-nav="memories">
+                    <span class="card-emoji">📸</span>
+                    <div class="card-info">
+                        <h3>回忆墙</h3><span>翻开那些温暖瞬间</span>
+                    </div>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="home-card" data-nav="cheers">
+                    <span class="card-emoji">🍵</span>
+                    <div class="card-info">
+                        <h3>云端敬茶</h3><span>以茶代酒 遥敬恩师</span>
+                    </div>
+                    <span class="arrow">→</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 心里话页 ===== -->
+        <div class="page" id="page-letter">
+            <div class="page-title"><span class="dot">◆</span> 心 里 话 <span class="dot">◆</span></div>
+            <div class="letter-paper">
+                <p class="typewriter-text" id="typewriterText"></p>
+                <span class="cursor" id="typewriterCursor"></span>
+                <br>
+                <button class="letter-skip" id="letterSkip">跳过动画 → 直接看全文</button>
+            </div>
+            <div class="heart-float-area">
+                <button class="send-heart-btn" id="sendHeartBtn" title="送一颗小心心给老师">❤️</button>
+                <p style="font-size:0.75rem;color:#c9b896;margin-top:2px;">点一下，送一颗心</p>
+            </div>
+        </div>
+
+        <!-- ===== 回忆墙页（照片卡片） ===== -->
+        <div class="page" id="page-memories">
+            <div class="page-title"><span class="dot">◆</span> 回 忆 墙 <span class="dot">◆</span></div>
+            <p style="text-align:center;font-size:0.85rem;color:#ab9a85;margin-bottom:18px;letter-spacing:2px;">
+                翻开卡片，看看我们的「修仙」时光 ✨
+            </p>
+            <div class="memories-grid">
+                <!-- 卡片1：正面 "神王"，背面 img4.jpg -->
+                <div class="memory-card">
+                    <div class="card-face card-front">
+                        <span class="front-emoji">👑</span>
+                        <span class="front-label">神 王</span>
+                        <span class="front-hint">点击翻开</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <img src="images/img4.jpg" alt="神王" loading="lazy">
+                        <span class="photo-label">👑 神王</span>
+                    </div>
+                </div>
+                <!-- 卡片2：正面 "神班"，背面 img3.jpg -->
+                <div class="memory-card">
+                    <div class="card-face card-front">
+                        <span class="front-emoji">⭐</span>
+                        <span class="front-label">神 班</span>
+                        <span class="front-hint">点击翻开</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <img src="images/img3.jpg" alt="神班" loading="lazy">
+                        <span class="photo-label">⭐ 神班</span>
+                    </div>
+                </div>
+                <!-- 卡片3：正面 "得道飞升"，背面 img2.jpg -->
+                <div class="memory-card">
+                    <div class="card-face card-front">
+                        <span class="front-emoji">☁️</span>
+                        <span class="front-label">得道飞升</span>
+                        <span class="front-hint">点击翻开</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <img src="images/img2.jpg" alt="得道飞升" loading="lazy">
+                        <span class="photo-label">☁️ 得道飞升</span>
+                    </div>
+                </div>
+                <!-- 卡片4：正面 "群神像"，背面 img1.jpg -->
+                <div class="memory-card">
+                    <div class="card-face card-front">
+                        <span class="front-emoji">📸</span>
+                        <span class="front-label">群 神 像</span>
+                        <span class="front-hint">点击翻开</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <img src="images/img1.jpg" alt="群神像" loading="lazy">
+                        <span class="photo-label">📸 群神像</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 敬茶页 ===== -->
+        <div class="page" id="page-cheers">
+            <div class="page-title"><span class="dot">◆</span> 云 端 敬 茶 <span class="dot">◆</span></div>
+            <div class="tea-scene">
+                <div class="tea-cup-area" id="teaCupArea">
+                    <span class="tea-cup-emoji">🍵</span>
+                </div>
+                <p style="font-size:0.85rem;color:#c9a96e;margin-top:4px;letter-spacing:2px;">👆 点击茶杯，斟满心意</p>
+                <div class="tea-progress-wrap">
+                    <div class="tea-progress-fill" id="teaProgressFill"></div>
+                </div>
+                <p class="tea-counter" id="teaCounter">心意值：0 / 10</p>
+                <p class="tea-toast-msg" id="teaToastMsg"></p>
+                <button class="tea-reset" id="teaReset">🔄 再敬一杯</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 底部导航栏 ==================== -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-section="home">
+            <span class="icon">🏠</span>首页
+        </button>
+        <button class="nav-btn" data-section="letter">
+            <span class="icon">💌</span>心里话
+        </button>
+        <button class="nav-btn" data-section="memories">
+            <span class="icon">📸</span>回忆墙
+        </button>
+        <button class="nav-btn" data-section="cheers">
+            <span class="icon">🍵</span>敬茶
+        </button>
+    </nav>
+
+    <script>
+        (function() {
+            // ============ 页面切换 ============
+            const pages = document.querySelectorAll('.page');
+            const navBtns = document.querySelectorAll('.nav-btn');
+            let currentPage = 'home';
+            let typewriterTimer = null;
+            let typewriterResolve = null;
+
+            function switchPage(targetId) {
+                if (currentPage === targetId) return;
+                // 清理打字机
+                if (typewriterTimer) clearTimeout(typewriterTimer);
+                if (typewriterResolve) typewriterResolve();
+                typewriterTimer = null;
+                typewriterResolve = null;
+
+                pages.forEach(p => p.classList.remove('active'));
+                const target = document.getElementById('page-' + targetId);
+                if (target) target.classList.add('active');
+
+                navBtns.forEach(b => b.classList.remove('active'));
+                const activeBtn = document.querySelector(`[data-section="${targetId}"]`);
+                if (activeBtn) activeBtn.classList.add('active');
+
+                currentPage = targetId;
+
+                // 进入特定页面的初始化
+                if (targetId === 'letter') startTypewriter();
+                if (targetId === 'cheers') updateTeaUI();
+                if (targetId === 'home') resetCapAnimation();
+            }
+
+            // 底部导航点击
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchPage(btn.dataset.section));
+            });
+
+            // 首页卡片点击跳转
+            document.querySelectorAll('.home-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const target = card.dataset.nav;
+                    if (target) switchPage(target);
+                });
+            });
+
+            // ============ 毕业帽动画 ============
+            const capWrapper = document.getElementById('capWrapper');
+            let capTossing = false;
+
+            function resetCapAnimation() {
+                capWrapper.classList.remove('tossing');
+                capTossing = false;
+                void capWrapper.offsetWidth;
+                capWrapper.style.animation = 'none';
+                setTimeout(() => {
+                    capWrapper.style.animation = '';
+                }, 10);
+            }
+
+            capWrapper.addEventListener('click', function(e) {
+                if (capTossing) return;
+                capTossing = true;
+                capWrapper.classList.add('tossing');
+                spawnConfetti(40);
+                if (navigator.vibrate) navigator.vibrate(15);
+                setTimeout(() => {
+                    capWrapper.classList.remove('tossing');
+                    capTossing = false;
+                }, 750);
+            });
+
+            // ============ 打字机效果 ============
+            const typewriterEl = document.getElementById('typewriterText');
+            const cursorEl = document.getElementById('typewriterCursor');
+            const skipBtn = document.getElementById('letterSkip');
+            const fullText = `亲爱的老师：
+
+            虽然没能亲赴谢师宴，但这份感激隔着屏幕也要送到。
+
+            还记得您的经典口头禅、批改作业时的红色批注，还有那些让我醍醐灌顶的瞬间……
+
+            谢谢您，不只教知识，更教会我做一个温暖的人。
+
+            —— 您的学生`;
+
+            function startTypewriter() {
+                typewriterEl.textContent = '';
+                cursorEl.classList.remove('done');
+                cursorEl.style.display = 'inline-block';
+                skipBtn.style.display = 'inline-block';
+                let index = 0;
+                let skipped = false;
+                const chars = [...fullText];
+
+                function typeNext() {
+                    if (skipped) return;
+                    if (index >= chars.length) {
+                        cursorEl.classList.add('done');
+                        skipBtn.style.display = 'none';
+                        typewriterTimer = null;
+                        return;
+                    }
+                    typewriterEl.textContent += chars[index];
+                    index++;
+                    const delay = /[，。！？、；：\n]/.test(chars[index - 1]) ? 120 : 55;
+                    typewriterTimer = setTimeout(typeNext, delay);
+                }
+
+                function skipAll() {
+                    skipped = true;
+                    if (typewriterTimer) clearTimeout(typewriterTimer);
+                    typewriterEl.textContent = fullText;
+                    cursorEl.classList.add('done');
+                    skipBtn.style.display = 'none';
+                    typewriterTimer = null;
+                }
+
+                skipBtn.onclick = skipAll;
+                typewriterResolve = () => { skipped = true; };
+                typewriterTimer = setTimeout(typeNext, 300);
+            }
+
+            // ============ 小心心飘浮 ============
+            const sendHeartBtn = document.getElementById('sendHeartBtn');
+            sendHeartBtn.addEventListener('click', function(e) {
+                const heart = document.createElement('span');
+                heart.className = 'floating-heart';
+                heart.textContent = ['❤️', '💛', '💚', '💜', '🧡', '💖'][Math.floor(Math.random() * 6)];
+                const rect = sendHeartBtn.getBoundingClientRect();
+                heart.style.left = rect.left + rect.width / 2 - 12 + 'px';
+                heart.style.top = rect.top + 'px';
+                heart.style.animationDuration = (Math.random() * 1.5 + 2) + 's';
+                document.body.appendChild(heart);
+                if (navigator.vibrate) navigator.vibrate(10);
+                setTimeout(() => heart.remove(), 3000);
+            });
+
+            // ============ 回忆卡片翻转 ============
+            document.querySelectorAll('.memory-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const wasFlipped = this.classList.contains('flipped');
+                    document.querySelectorAll('.memory-card').forEach(c =>
+                        c.classList.remove('flipped'));
+                    if (!wasFlipped) {
+                        this.classList.add('flipped');
+                    }
+                    if (navigator.vibrate) navigator.vibrate(8);
+                });
+            });
+
+            // ============ 敬茶互动 ============
+            let teaLevel = 0;
+            const maxTea = 10;
+            const teaCupArea = document.getElementById('teaCupArea');
+            const teaProgressFill = document.getElementById('teaProgressFill');
+            const teaCounter = document.getElementById('teaCounter');
+            const teaToastMsg = document.getElementById('teaToastMsg');
+            const teaReset = document.getElementById('teaReset');
+            const milestones = {
+                3: '🌿 茶香渐浓……',
+                6: '🍃 心意满满~',
+                9: '✨ 差一点就满了！',
+                10: '🎉 以茶代酒，敬恩师！师恩似海，终身难忘！',
+            };
+
+            function updateTeaUI() {
+                const pct = (teaLevel / maxTea) * 100;
+                teaProgressFill.style.width = pct + '%';
+                teaCounter.textContent = `心意值：${teaLevel} / ${maxTea}`;
+                if (milestones[teaLevel]) {
+                    teaToastMsg.textContent = milestones[teaLevel];
+                    teaToastMsg.style.transform = 'scale(1.1)';
+                    setTimeout(() => { teaToastMsg.style.transform = 'scale(1)'; }, 200);
+                }
+            }
+
+            teaCupArea.addEventListener('click', function() {
+                if (teaLevel >= maxTea) {
+                    spawnConfetti(25);
+                    return;
+                }
+                teaLevel++;
+                updateTeaUI();
+                if (navigator.vibrate) navigator.vibrate(12);
+                if (teaLevel >= maxTea) {
+                    setTimeout(() => spawnConfetti(80), 300);
+                    teaCupArea.style.transform = 'scale(1.08)';
+                    setTimeout(() => { teaCupArea.style.transform = ''; }, 300);
+                }
+            });
+
+            teaReset.addEventListener('click', function() {
+                teaLevel = 0;
+                teaToastMsg.textContent = '';
+                updateTeaUI();
+                if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
+            });
+
+            // ============ 彩带/纸屑系统 ============
+            function spawnConfetti(count = 40) {
+                const container = document.getElementById('confettiContainer');
+                const colors = [
+                    '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff',
+                    '#ff922b', '#cc5de8', '#f06595', '#20c997',
+                    '#ffa94d', '#748ffc', '#da77f2', '#ffe066'
+                ];
+                const shapes = ['square', 'rect'];
+                const fragment = document.createDocumentFragment();
+
+                for (let i = 0; i < count; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                    const size = Math.random() * 8 + 6;
+                    const left = Math.random() * 100;
+                    const delay = Math.random() * 0.6;
+                    const dur = Math.random() * 1.5 + 2;
+                    const rot = Math.random() * 1080 - 540;
+
+                    piece.style.cssText = `
+                        background: ${color};
+                        width: ${shape === 'rect' ? size * 1.6 : size}px;
+                        height: ${size}px;
+                        border-radius: ${shape === 'square' ? '2px' : '50%'};
+                        left: ${left}%;
+                        --dur: ${dur}s;
+                        --delay: ${delay}s;
+                        --rot: ${rot}deg;
+                    `;
+                    fragment.appendChild(piece);
+                }
+
+                container.appendChild(fragment);
+
+                const maxDuration = 3.2;
+                setTimeout(() => {
+                    const pieces = container.querySelectorAll('.confetti-piece');
+                    if (pieces.length > 80) {
+                        pieces.forEach((p, i) => {
+                            if (i < pieces.length - 20) p.remove();
+                        });
+                    }
+                }, maxDuration * 1000);
+
+                setTimeout(() => {
+                    const allPieces = container.querySelectorAll('.confetti-piece');
+                    allPieces.forEach(p => {
+                        const style = getComputedStyle(p);
+                        const animDur = parseFloat(style.getPropertyValue('--dur')) || 2.5;
+                        const animDelay = parseFloat(style.getPropertyValue('--delay')) || 0;
+                        const total = (animDur + animDelay) * 1000 + 200;
+                        setTimeout(() => p.remove(), total);
+                    });
+                }, 50);
+            }
+
+            // ============ 背景浮粒 ============
+            function createBgParticles() {
+                const container = document.getElementById('bgParticles');
+                const frag = document.createDocumentFragment();
+                for (let i = 0; i < 22; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'bg-particle';
+                    const size = Math.random() * 4 + 2;
+                    const left = Math.random() * 100;
+                    const delay = Math.random() * 10;
+                    const duration = Math.random() * 6 + 7;
+                    particle.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${left}%;
+                        animation-delay: ${delay}s;
+                        animation-duration: ${duration}s;
+                    `;
+                    frag.appendChild(particle);
+                }
+                container.appendChild(frag);
+            }
+            createBgParticles();
+
+            // ============ 初始状态 ============
+            updateTeaUI();
+
+            console.log('🎓 谢师恩页面已就绪！');
+            console.log('  🏠 首页 - 戳毕业帽有惊喜');
+            console.log('  💌 心里话 - 打字机效果');
+            console.log('  📸 回忆墙 - 翻卡片看照片');
+            console.log('  🍵 敬茶 - 点满10下放大烟花');
+            console.log('❤ 祝老师桃李满天下！');
+        })();
+    </script>
+</body>
+</html>
